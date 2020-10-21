@@ -18,6 +18,7 @@ export class ReactiveComponent implements OnInit {
 
     this.crearFormulario();
     this.cargarDataAlFormulario();
+    this.crearListeners();
 
   }
 
@@ -48,6 +49,12 @@ export class ReactiveComponent implements OnInit {
 
   }
 
+  get usuarioNoValido(): boolean {
+
+    return this.forma.get('usuario').invalid && this.forma.get('usuario').touched;
+
+  }
+
   get distritoNoValido(): boolean {
 
     return this.forma.get('direccion.distrito').invalid && this.forma.get('direccion.distrito').touched;
@@ -60,6 +67,22 @@ export class ReactiveComponent implements OnInit {
 
   }
 
+  get pass1NoValido(): boolean {
+
+    return this.forma.get('pass1').invalid && this.forma.get('pass1').touched;
+
+  }
+
+  get pass2NoValido(): boolean {
+
+    const pass1 =  this.forma.get('pass1').value;
+
+    const pass2 = this.forma.get('pass2').value;
+
+    return ( pass1 === pass2 ) ? false : true;
+
+  }
+
   crearFormulario(): void {
 
     this.forma = this.fb.group({
@@ -67,11 +90,16 @@ export class ReactiveComponent implements OnInit {
       nombre  : ['', [Validators.required, Validators.minLength(5)] ],
       apellido: ['', [Validators.required, Validators.minLength(5), this.validadores.noHerrera] ],
       correo  : ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')] ],
+      usuario: ['', , this.validadores.existeUsuario ],
+      pass1  : ['', Validators.required ],
+      pass2  : ['', Validators.required ],
       direccion: this.fb.group({
         distrito: ['', Validators.required ],
         ciudad: ['', Validators.required]
       }),
       pasatiempos: this.fb.array( [] )
+    }, {
+      validators: this.validadores.passwordsIguales('pass1', 'pass2')
     });
 
   }
@@ -83,6 +111,9 @@ export class ReactiveComponent implements OnInit {
       nombre: 'Jhoon',
       apellido: 'Dooee',
       correo: 'jhondoe@gmail.com',
+      usuario: 'user',
+      pass1: '123',
+      pass2: '123',
       direccion: {
         distrito: 'disctric',
         ciudad: 'city'
@@ -137,6 +168,16 @@ export class ReactiveComponent implements OnInit {
 
     // * POST INFO
     this.forma.reset();
+
+  }
+
+  crearListeners() {
+
+    this.forma.valueChanges.subscribe( valor => console.log(valor) );
+
+    this.forma.statusChanges.subscribe( status => console.log(status) );
+
+    this.forma.get('nombre').valueChanges.subscribe( console.log );
 
   }
 

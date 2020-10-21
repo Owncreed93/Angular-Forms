@@ -52,6 +52,51 @@
     </div>
   </div>
 
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Usuario</label>
+    <div class="col-8">
+
+      <input class="form-control"
+             type="text"
+             formControlName="usuario"
+             [class.is-invalid]="usuarioNoValido"
+            >
+      <small *ngIf="usuarioNoValido" class="text text-danger">
+        Ese nombre de usuario ya fue tomado
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Contraseña</label>
+    <div class="col-8">
+
+      <input class="form-control"
+             type="password"
+             formControlName="pass1"
+             [class.is-invalid]="pass1NoValido"
+            >
+      <small *ngIf="pass1NoValido" class="text text-danger">
+        Contraseña no v&aacute;lida
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Repita contraseña</label>
+    <div class="col-8">
+
+      <input class="form-control"
+             type="password"
+             formControlName="pass2"
+             [class.is-invalid]="pass2NoValido"
+            >
+      <small *ngIf="pass2NoValido" class="text text-danger">
+        Contraseñas deben coincidir
+      </small>
+    </div>
+  </div>
+
   <div class="form-group row" formGroupName="direccion">
 
     <label class="col-2 col-form-label">Direcci&oacute;n :</label>
