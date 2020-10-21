@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ValidadoresService } from '../../services/validadores.service';
 
 @Component({
   selector: 'app-reactive',
@@ -10,13 +11,23 @@ export class ReactiveComponent implements OnInit {
 
   forma: FormGroup;
 
-  constructor( private fb:FormBuilder ) {
+  constructor(
+    private fb: FormBuilder,
+    private validadores: ValidadoresService
+  ) {
 
     this.crearFormulario();
+    this.cargarDataAlFormulario();
 
   }
 
   ngOnInit(): void {
+  }
+
+  get pasaTiempos(): FormArray {
+
+    return this.forma.get('pasatiempos') as FormArray;
+
   }
 
   get nombreNoValido(): boolean {
@@ -54,13 +65,43 @@ export class ReactiveComponent implements OnInit {
     this.forma = this.fb.group({
       // <value> : ['<default_value>', 'synchronous_validators', 'asynchronous_validators']
       nombre  : ['', [Validators.required, Validators.minLength(5)] ],
-      apellido: ['', [Validators.required, Validators.minLength(5)] ],
+      apellido: ['', [Validators.required, Validators.minLength(5), this.validadores.noHerrera] ],
       correo  : ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')] ],
       direccion: this.fb.group({
         distrito: ['', Validators.required ],
         ciudad: ['', Validators.required]
-      })
+      }),
+      pasatiempos: this.fb.array( [] )
     });
+
+  }
+
+  cargarDataAlFormulario(): void {
+
+    // this.forma.setValue({
+    this.forma.reset({
+      nombre: 'Jhoon',
+      apellido: 'Dooee',
+      correo: 'jhondoe@gmail.com',
+      direccion: {
+        distrito: 'disctric',
+        ciudad: 'city'
+      }
+    });
+
+    ['Comer', 'Dormir'].forEach( valor => this.pasaTiempos.push( this.fb.control(valor) ) );
+
+  }
+
+  agregarPasaTiempo(): void{
+
+    this.pasaTiempos.push( this.fb.control( '' ) );
+
+  }
+
+  borrarPasaTiempo(i: number): void{
+
+    this.pasaTiempos.removeAt(i);
 
   }
 
@@ -90,9 +131,13 @@ export class ReactiveComponent implements OnInit {
 
         });
 
-        return;
+        // return;
 
     }
+
+    // * POST INFO
+    this.forma.reset();
+
   }
 
 
